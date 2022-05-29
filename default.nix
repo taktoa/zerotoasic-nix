@@ -1,6 +1,6 @@
 rec {
   overlay = self: super: {
-    lemon-coin = self.callPackage ./lemon.nix {};
+    #lemon-coin = self.callPackage ./lemon.nix {};
     # abc-verifier = super.abc-verifier.overrideAttrs (old: {
     #   src = super.fetchFromGitHub {
     #     owner  = "The-OpenROAD-Project";
@@ -27,7 +27,22 @@ rec {
     #   '';
     #   enableParallelBuilding = true;
     # });
-    openroad = self.callPackage ./openroad.nix {};
+    #openroad = self.callPackage ./openroad.nix {};
+
+    openroad = super.openroad.overrideAttrs (old: {
+       version = "2.1rc";
+       src = super.fetchFromGitHub {
+         owner  = "The-OpenROAD-Project";
+         repo   = "OpenROAD";
+         rev    = "63139a5d7b15d6a6818853be33254eb0a651cad8";
+         sha256 = "1gffnjgjlrkd92a6y1i741ah3ia8n389q42bnbci123p37dhdg12";
+         fetchSubmodules = true;
+       };
+       cmakeFlags = (old.cmakeFlags or []) ++ [
+         "-DOPENROAD_VERSION=2.1rc-github-head"
+         "-DUSE_SYSTEM_BOOST=ON"
+       ];
+    });
   };
 
   nixpkgsRev = "41ff747f882914c1f8c233207ce280ac9d0c867f";
